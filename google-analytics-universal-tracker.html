@@ -49,6 +49,13 @@ To use Google Analytics user id attribution https://developers.google.com/analyt
                 userId: {
                     type: String,
                     notify: true
+                },
+                /**
+                 * Optinal boolean to send a page view when the element is loaded
+                 */
+                auto: {
+                    type: Boolean,
+                    value: false
                 }
             },
             listeners: {
@@ -57,9 +64,10 @@ To use Google Analytics user id attribution https://developers.google.com/analyt
                 'user-id-changed': 'userIDChanged'
             },
             ready: function() {
-				console.log("setup GS for "+this.code);
                 ga('create', this.code, 'auto');
-                this.trackPage();
+                if (this.auto) {
+                    this.trackPage();
+                }
             },
             trackEvent: function(e) {
                 //Add support for a non-interactin even that does not effect bounce rates - eg things that happen after a timeout
@@ -68,7 +76,7 @@ To use Google Analytics user id attribution https://developers.google.com/analyt
             },
             trackPage: function(e) {
                 //Use set param, this way if we then send a subsequent event on the page it will be correctly associated with the same page
-                if (e != undefined && e.detail.path !== undefined) {
+                if (e !== undefined && e.detail.path !== undefined) {
                     ga('set', 'page', e.detail.path);
                 }
                 ga('send', 'pageview');

@@ -25,8 +25,8 @@
     "tests"
   ],
   "dependencies": {
+    "polymer": "^1.2.0",
     "iron-signals": "PolymerElements/iron-signals#~1.0.2",
-    "polymer": "~1.1.1",
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0"
   }
 }
