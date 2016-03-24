@@ -23,7 +23,7 @@ To use Google Analytics user id attribution https://developers.google.com/analyt
 -->
 <dom-module id="google-analytics-universal-tracker">
     <template>
-        <iron-signals on-iron-signal-track-page="trackPage" on-iron-signal-track-event="trackEvent"></iron-signals>
+        <iron-signals on-iron-signal-track-page="trackPage" on-iron-signal-track-event="trackEventEvent"></iron-signals>
     </template>
 </dom-module>
 <script>
@@ -52,19 +52,18 @@ To use Google Analytics user id attribution https://developers.google.com/analyt
                 }
             },
             listeners: {
-                'track-event': 'trackEvent',
+                'track-event': 'trackEventEvent',
                 'track-page': 'trackPage',
                 'user-id-changed': 'userIDChanged'
             },
             ready: function() {
-				console.log("setup GS for "+this.code);
                 ga('create', this.code, 'auto');
                 this.trackPage();
             },
-            trackEvent: function(e) {
+            trackEventEvent: function(e) {
                 //Add support for a non-interactin even that does not effect bounce rates - eg things that happen after a timeout
                 //ga('send', 'event', 'category', 'action', {'nonInteraction': 1});
-                ga('send', 'event', e.detail.category, e.detail.action, e.detail.label, e.detail.value);
+                this.trackEvent(e.detail.category, e.detail.action, e.detail.label, e.detail.value);
             },
             trackPage: function(e) {
                 //Use set param, this way if we then send a subsequent event on the page it will be correctly associated with the same page
@@ -75,6 +74,17 @@ To use Google Analytics user id attribution https://developers.google.com/analyt
             },
             userIDChanged: function(e) {
                 ga('set', '&uid', this.userId);
+            },
+            trackEvent: function(category, action, label, value) {
+                var eventBuilder = {eventCategory: category, eventAction: action};
+                if(label != undefined ) {
+                    eventBuilder.eventLabel = label;
+                }
+                if(value != undefined) {
+                    eventBuilder.eventValue = value;
+                }
+                ga('send', 'event', eventBuilder);
+                
             }
         });
     })();
